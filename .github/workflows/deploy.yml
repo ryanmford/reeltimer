@@ -33,13 +33,13 @@ jobs:
       - name: Copy Build to ApexSpeedrun
         run: |
           # Create directory if it doesn't exist
-          mkdir -p apexspeedrun/public/reeltime
+          mkdir -p apexspeedrun/reeltime
           
           # Remove old assets/files in that specific folder to keep it clean
-          rm -rf apexspeedrun/public/reeltime/*
+          rm -rf apexspeedrun/reeltime/*
           
-          # Copy new build files from reeltimer/dist to apexspeedrun/public/reeltime
-          cp -r dist/* apexspeedrun/public/reeltime/
+          # Copy new build files from reeltimer/dist to apexspeedrun/reeltime
+          cp -r dist/* apexspeedrun/reeltime/
           
       - name: Commit and Push
         run: |
