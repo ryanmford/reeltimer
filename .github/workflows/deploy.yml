@@ -1,0 +1,51 @@
+name: Build and Deploy to ApexSpeedrun
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout reeltimer
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Checkout apexspeedrun
+        uses: actions/checkout@v4
+        with:
+          repository: ryanmford/apexspeedrun
+          token: ${{ secrets.AUTO_BUILD_TOKEN }}
+          path: apexspeedrun
+
+      - name: Copy Build to ApexSpeedrun
+        run: |
+          # Create directory if it doesn't exist
+          mkdir -p apexspeedrun/public/reeltime
+          
+          # Remove old assets/files in that specific folder to keep it clean
+          rm -rf apexspeedrun/public/reeltime/*
+          
+          # Copy new build files from reeltimer/dist to apexspeedrun/public/reeltime
+          cp -r dist/* apexspeedrun/public/reeltime/
+          
+      - name: Commit and Push
+        run: |
+          cd apexspeedrun
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-update reeltimer from source" || echo "No changes to commit"
+          git push
